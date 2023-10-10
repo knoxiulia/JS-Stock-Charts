@@ -12,7 +12,7 @@ async function main() {
     const { GME, MSFT, DIS, BNTX } = mockData;
 
     const stocks = [GME, MSFT, DIS, BNTX];
-
+    console.log(stocks)
     function getColor(stock){
         if(stock === "GME"){
             return 'rgba(61, 161, 61, 0.7)'
@@ -42,16 +42,25 @@ async function main() {
         }
     });
 
+    function findHighestValue (values){ //[3, 7, 12, 5, 43, 8]
+        let highest = values[0].high // highest = 3
+        for (let i = 1; i < values.length; i++){
+            if (highest < values[i].high){
+                highest = values[i].high //43
+            }
+        }
+        return highest //43
+    }
     new Chart(highestPriceChartCanvas.getContext('2d'), {
         type: 'bar',
         data: {
-            labels: stocks[0].values.map(value => value.mockdata),
-            datasets: stocks.map( stock => ({
-                label: stock.meta.symbol,
-                data: stock.values.map(value => parseFloat(value.high)),
-                backgroundColor:  getColor(stock.meta.symbol),
-                borderColor: getColor(stock.meta.symbol),
-            }))
+            labels: stocks.map(stock => stock.meta.symbol),
+            datasets: [{
+                label: 'highest value',
+                data: stocks.map(stock => findHighestValue(stock.values)),
+                backgroundColor:  stocks.map(stock => getColor(stock.meta.symbol)),
+                borderColor: stocks.map(stock => getColor(stock.meta.symbol))
+            }]
         }
     });
     
