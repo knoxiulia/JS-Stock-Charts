@@ -9,6 +9,9 @@ async function main() {
     // let results = await response.json();
     // console.log(results)
 
+
+// Stock Price Over Time below -------
+
     const { GME, MSFT, DIS, BNTX } = mockData;
 
     const stocks = [GME, MSFT, DIS, BNTX];
@@ -33,14 +36,18 @@ async function main() {
         type: 'line',
         data: {
             labels: stocks[0].values.reverse().map(value => value.datetime),
-            datasets: stocks.map( stock => ({
+            datasets: stocks.map(stock => ({
                 label: stock.meta.symbol,
                 data: stock.values.map(value => parseFloat(value.high)),
-                backgroundColor:  getColor(stock.meta.symbol),
+                backgroundColor: getColor(stock.meta.symbol),
                 borderColor: getColor(stock.meta.symbol),
             }))
         }
     });
+
+    console.log(stocks[0].values.map( value => value.datetime))   
+
+// Highest Stock Price below -----------
 
     function findHighestValue (values){ //[3, 7, 12, 5, 43, 8]
         let highest = values[0].high // highest = 3
@@ -63,12 +70,33 @@ async function main() {
             }]
         }
     });
-    
-    
-    
-    console.log(stocks[0].values.map( value => value.datetime))                                                 
 
-    
+// Average Stock Price below ------------
+
+
+    function findAverage(values) {
+        let total = 0;
+
+        values.forEach((value) => {
+            total += parseFloat(value.high);
+        });
+        return total / values.length;
+    }
+
+    new Chart(averagePriceChartCanvas.getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: stocks.map(stock => stock.meta.symbol),
+            datasets: [{
+                label: 'average',
+                data: stocks.map((stock) => findAverage(stock.values)),
+                backgroundColor:  stocks.map((stock) => getColor(stock.meta.symbol)),
+                borderColor: stocks.map((stock) => getColor(stock.meta.values)),
+            }]
+        }
+    })
+
+
 }
 
 main()
